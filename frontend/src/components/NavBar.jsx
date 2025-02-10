@@ -16,7 +16,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Logo from "./Logo.jsx";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { UserContext } from "../contexts/UserProvider.jsx";
 import axios from "axios";
 import {getCookie} from "../csrf/csrf.jsx";
@@ -28,7 +27,6 @@ function Navbar({ buttons }) {
   const isMobile = useMediaQuery("(max-width:600px)");
   const theme = useTheme();
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -61,16 +59,10 @@ function Navbar({ buttons }) {
     }
   };
 
-  const navigateContact = () => {
-    navigate("/contact");
-    setDrawerOpen(false);
-  };
-
-  const translatedButtons = [
-    t("home") || "Home",
-    t("contact") || "Contact",
-    t("profile") || "Profile",
-    t("signOut") || "Sign Out",
+  const navButtons = [
+    "Home",
+    "Profile", 
+    "Sign Out"
   ];
 
   return (
@@ -82,7 +74,7 @@ function Navbar({ buttons }) {
         padding: isMobile ? "8px 16px" : "8px 98px",
         boxShadow: "none",
         borderBottom: `1px solid ${theme.palette.divider}`,
-        zIndex: 1201, // Ensure it stays above other elements
+        zIndex: 1201,
       }}
     >
       <Toolbar>
@@ -108,18 +100,15 @@ function Navbar({ buttons }) {
                   backgroundColor: theme.palette.background.default,
                   color: theme.palette.text.primary,
                   display: "flex",
-                  justifyContent: "center", // Center items vertically
-                  alignItems: "center", // Center items horizontally
+                  justifyContent: "center",
+                  alignItems: "center",
                 },
               }}
             >
               <Box sx={{ width: 250 }} role="presentation">
                 <List>
                   <ListItem button onClick={navigateHome}>
-                    <ListItemText primary={translatedButtons[0]} />
-                  </ListItem>
-                  <ListItem button onClick={navigateContact}>
-                    <ListItemText primary={translatedButtons[1]} />
+                    <ListItemText primary={navButtons[0]} />
                   </ListItem>
                   <ListItem
                     button
@@ -144,7 +133,7 @@ function Navbar({ buttons }) {
                         }}
                       />
                     )}
-                    <ListItemText primary={translatedButtons[2]} />
+                    <ListItemText primary={navButtons[1]} />
                   </ListItem>
                   <ListItem
                     button
@@ -157,7 +146,7 @@ function Navbar({ buttons }) {
                     }}
                     onClick={navigateSignOut}
                   >
-                    <ListItemText primary={translatedButtons[3]} />
+                    <ListItemText primary={navButtons[2]} />
                   </ListItem>
                 </List>
               </Box>
@@ -167,18 +156,15 @@ function Navbar({ buttons }) {
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center", // Center align buttons horizontally
+              justifyContent: "center",
               alignItems: "center",
-              flexGrow: 1, // Push buttons to the center
-              gap: 5, // Add spacing between buttons
+              flexGrow: 1,
+              gap: 5,
               marginRight: "130px",
             }}
           >
             <Button onClick={navigateHome} sx={{ color: theme.palette.text.primary }}>
-              {translatedButtons[0]}
-            </Button>
-            <Button onClick={navigateContact} sx={{ color: theme.palette.text.primary }}>
-              {translatedButtons[1]}
+              {navButtons[0]}
             </Button>
             {userDataLoading ? (
               <CircularProgress sx={{ color: theme.palette.text.primary }} />
@@ -213,7 +199,7 @@ function Navbar({ buttons }) {
                 padding: "5px 20px",
               }}
             >
-              {translatedButtons[3]}
+              {navButtons[2]}
             </Button>
           </Box>
         )}

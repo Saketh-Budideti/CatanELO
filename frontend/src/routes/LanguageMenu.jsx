@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu, MenuItem, Button } from '@mui/material';
 import { useLanguage } from '../contexts/LanguageProvider.jsx';
-import { useTranslation } from 'react-i18next';
 
 function LanguageMenu() {
   const { languageAnchorEl, handleLanguageMenuOpen, handleLanguageMenuClose, changeLanguage } = useLanguage();

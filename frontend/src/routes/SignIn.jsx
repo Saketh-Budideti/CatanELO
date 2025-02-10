@@ -14,12 +14,10 @@ import axios from "axios";
 import Logo from "../components/Logo.jsx";
 import { getCookie } from "../csrf/csrf.jsx";
 import { ThemeProvider, useTheme } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
 
 function SignIn() {
   const theme = useTheme(); // Hook to use the current theme
   const navigate = useNavigate();
-  const { t } = useTranslation(); // Hook to use translations
 
   const [formErrors, setFormErrors] = useState("");
   const [serverError, setServerError] = useState("");
@@ -54,7 +52,7 @@ function SignIn() {
         if (res?.status === 400) {
           setFormErrors(res.data.error);
         } else {
-          setServerError(t("serverError", { code: res?.status || "unknown" }));
+          setServerError(`Server error: ${res?.status || "unknown"}`);
           console.error(res);
         }
       });
@@ -87,7 +85,7 @@ function SignIn() {
           fontSize: { xs: "0.8rem", sm: "1rem" }, // Responsive font size
         }}
       >
-        {t("back")}
+        Back
       </Button>
 
       <Stack
@@ -106,13 +104,13 @@ function SignIn() {
         {/* Username Field */}
         <TextField
           id="username"
-          label={t("username")}
+          label="Username"
           variant="outlined"
           autoComplete="username"
           value={username}
           onChange={handleUsernameChange}
           error={!!formErrors}
-          placeholder={t("usernamePlaceholder")}
+          placeholder="Enter your username"
           sx={{
             width: { xs: "90%", sm: "80%", md: "500px" }, // Responsive width
             "& .MuiOutlinedInput-root": {
@@ -132,7 +130,7 @@ function SignIn() {
         {/* Password Field */}
         <TextField
           id="password"
-          label={t("password")}
+          label="Password"
           type={showPassword ? "text" : "password"}
           variant="outlined"
           autoComplete="password"
@@ -140,7 +138,7 @@ function SignIn() {
           onChange={handlePasswordChange}
           error={!!formErrors}
           helperText={formErrors}
-          placeholder={t("passwordPlaceholder")}
+          placeholder="Enter your password"
           sx={{
             width: { xs: "90%", sm: "80%", md: "500px" }, // Responsive width
             "& .MuiOutlinedInput-root": {
@@ -161,11 +159,7 @@ function SignIn() {
                 <IconButton
                   onClick={handleTogglePasswordVisibility}
                   edge="end"
-                  aria-label={t(
-                    showPassword
-                      ? "togglePasswordVisibility.hide"
-                      : "togglePasswordVisibility.show"
-                  )}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
@@ -190,7 +184,7 @@ function SignIn() {
           }}
           onClick={handleSignIn}
         >
-          {t("signIn")}
+          Sign In
         </Button>
       </Stack>
     </ThemeProvider>

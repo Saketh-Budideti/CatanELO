@@ -1,17 +1,15 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Stack, Button, Typography, useTheme } from "@mui/material";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
 import NavBar from "../components/NavBar.jsx";
-import { UserContext } from "../contexts/UserProvider.jsx"; // Import UserContext
+import { UserContext } from "../contexts/UserProvider.jsx";
 
 function MainPage({ toggleTheme, currentMode }) {
-    const { t } = useTranslation(); // Access the translation function
     const navigate = useNavigate();
-    const theme = useTheme(); // Access the theme
+    const theme = useTheme();
 
-    const { user } = useContext(UserContext); // Access user data from context
-    const userName = user?.username ? `@${user.username}` : "@Guest"; // Add "@" before username
+    const { user } = useContext(UserContext);
+    const userName = user?.username ? `@${user.username}` : "@Guest";
 
     const navigatemyWrap = () => {
         navigate("/wrapper");
@@ -29,7 +27,7 @@ function MainPage({ toggleTheme, currentMode }) {
         >
             {/* Navbar at the top */}
             <NavBar
-                buttons={[t("contact"), t("profile"), t("signOut")]} // Use translations for Navbar buttons
+                buttons={["Profile", "Sign Out"]}
                 toggleTheme={toggleTheme}
                 currentMode={currentMode}
             />
@@ -42,8 +40,8 @@ function MainPage({ toggleTheme, currentMode }) {
                     justifyContent: "flex-start",
                     alignItems: "center",
                     flex: 1,
-                    paddingTop: { xs: 25, sm: 25, md: 25 }, // Responsive spacing below the navbar
-                    px: { xs: 2, md: 5 }, // Responsive horizontal padding
+                    paddingTop: { xs: 25, sm: 25, md: 25 },
+                    px: { xs: 2, md: 5 },
                 }}
             >
                 {/* Title */}
@@ -66,7 +64,7 @@ function MainPage({ toggleTheme, currentMode }) {
                         },
                     }}
                 >
-                    {t("welcomeUser", { user: userName })} {/* Dynamic welcome message */}
+                    Welcome {userName}!
                 </Typography>
 
                 {/* Button */}
@@ -100,7 +98,7 @@ function MainPage({ toggleTheme, currentMode }) {
                             },
                         }}
                     >
-                        {t("getMyWrap")}
+                        Get My Wrap
                     </Button>
                 </Stack>
             </Box>

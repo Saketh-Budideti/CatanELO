@@ -10,14 +10,8 @@ import MainPage from './routes/MainPage.jsx';
 import CreateAccount from './routes/CreateAccount.jsx';
 import ProfilePage from './routes/ProfilePage.jsx';
 import SignIn from './routes/SignIn.jsx';
-import ContactPage from './routes/ContactPage.jsx';
 import { AuthProvider, RequireAuth, RequireNoAuth } from './contexts/AuthProvider.jsx';
 import { UserProvider } from './contexts/UserProvider.jsx';
-import Wrapper from './routes/Wrapper.jsx';
-import './i18n.jsx';
-import { useTranslation } from 'react-i18next';
-import { LanguageProvider, useLanguage } from './contexts/LanguageProvider.jsx';
-import LanguageMenu from "./routes/LanguageMenu.jsx";
 
 
 function App() {
@@ -37,17 +31,14 @@ function App() {
   ];
 
   const authRoutes = [
-      { path: '/contact', Element: ContactPage },
       { path: '/profile', Element: ProfilePage },
       { path: '/main', Element: MainPage },
-      { path: '/wrapper', Element: Wrapper },
   ];
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <LanguageProvider>
           <Box sx={{ position: 'fixed', top: 16, right: 16, zIndex: 9999, display: 'flex', gap: 1 }}>
             <IconButton
               onClick={toggleTheme}
@@ -62,9 +53,6 @@ function App() {
             >
               {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
             </IconButton>
-
-            {/* Language Dropdown Button */}
-            <LanguageMenu />
           </Box>
 
           {/* Application Routes */}
@@ -96,7 +84,6 @@ function App() {
               />
             ))}
           </Routes>
-        </LanguageProvider>
       </AuthProvider>
     </ThemeProvider>
   );

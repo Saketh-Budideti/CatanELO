@@ -10,7 +10,6 @@ const UserContext = createContext();
 function UserProvider({ children }) {
     const [user, setUser] = useState(null); // Start with `null` for proper loading state
     const [userDataLoading, setUserDataLoading] = useState(true);
-    const [holiday, setHoliday] = useState("Default"); // Add holiday state
 
     const setUserData = (data) => {
         setUser({
@@ -46,9 +45,7 @@ function UserProvider({ children }) {
             value={{
                 user,
                 refreshUserData,
-                userDataLoading,
-                holiday,
-                setHoliday, // Add setHoliday to context value
+                userDataLoading
             }}
         >
             {userDataLoading ? (

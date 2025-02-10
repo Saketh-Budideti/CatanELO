@@ -15,7 +15,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthProvider.jsx";
 import Logo from "../components/Logo.jsx";
-import SpotifyPreview from "../components/SpotifyPreview.jsx";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useTranslation } from "react-i18next"; // Import translation hook
 
@@ -121,8 +120,6 @@ function CreateAccount() {
         }}
       >
         <Logo fontSize={isMobile ? "70px" : "100px"} />
-        <SpotifyPreview {...searchParams} />
-
         {/* Username Field */}
         <TextField
           id="username"
