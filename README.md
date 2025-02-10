@@ -1,2 +1,2 @@
 # CatanELO
-ELO System for catan games (or any other 4 person game)
+ELO System for catan games (4-6 players)
