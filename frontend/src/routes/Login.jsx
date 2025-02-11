@@ -7,12 +7,10 @@ import Fade from '@mui/material/Fade';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 
 function Login() {
     const [showLogo, setShowLogo] = useState(false);
     const theme = useTheme(); // Access the current theme
-    const { t } = useTranslation(); // Hook to access translations
     const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Detect mobile screens
 
     useEffect(() => {
@@ -23,19 +21,8 @@ function Login() {
 
     const handleSignIn = () => navigate('/signin');
 
-    const handleCreateAccount = async () => {
-        try {
-            const res = await axios.get('/api/auth/url', { withCredentials: true });
-            if (res.data && res.data.auth_url) {
-                window.location = res.data.auth_url;
-                console.log(window.location);
-            } else {
-                throw new Error(t('noAuthUrlError'));
-            }
-        } catch (ex) {
-            console.error(ex);
-            window.alert(t('spotifyError'));
-        }
+    const handleCreateAccount = () => {
+        navigate('/create-account');
     };
 
     return (
@@ -74,7 +61,7 @@ function Login() {
                     variant="outlined"
                     onClick={handleSignIn}
                 >
-                    {t('signIn')} {/* Translated "Sign In" */}
+                    Sign In
                 </Button>
             </Fade>
 
@@ -97,7 +84,7 @@ function Login() {
                     variant="outlined"
                     onClick={handleCreateAccount}
                 >
-                    {t('createAccount')} {/* Translated "Create Account" */}
+                    Create Account
                 </Button>
             </Fade>
         </Stack>

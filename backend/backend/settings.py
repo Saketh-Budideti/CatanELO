@@ -26,11 +26,6 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# Spotify API values
-SPOTIFY_CLIENT_ID = config('SPOTIFY_CLIENT_ID')
-SPOTIFY_REDIRECT_URI = config('SPOTIFY_REDIRECT_URI')
-SPOTIFY_SECRET = config('SPOTIFY_SECRET')
-
 # Other globals 
 USING_HTTPS = config('USING_HTTPS', default=True, cast=bool)
 FRONT_END_ORIGIN = config('FRONT_END_ORIGIN')
@@ -57,7 +52,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
-    "authentication",
     "user",
     "wrap",
     "rest_framework",

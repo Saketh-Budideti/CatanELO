@@ -1,77 +1,96 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
+  Snackbar,
   TextField,
   InputAdornment,
   IconButton,
   Button,
   Stack,
-  Snackbar,
+  Box,
   useTheme,
   useMediaQuery,
-  Box,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import { AuthContext } from "../contexts/AuthProvider.jsx";
-import Logo from "../components/Logo.jsx";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useTranslation } from "react-i18next"; // Import translation hook
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Logo from "../components/Logo.jsx";
+import { getCookie } from "../csrf/csrf.jsx";
+import { useTranslation } from "react-i18next";
 
 function CreateAccount() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { checkUserAuth } = useContext(AuthContext);
   const theme = useTheme();
+  const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const { t } = useTranslation(); // Access translations
+  const { t } = useTranslation();
 
-  const searchParams = Object.fromEntries(new URLSearchParams(location.search));
   const [formData, setFormData] = useState({
-    username: searchParams["display_name"],
-    email: searchParams["email"],
+    username: "",
+    email: "",
     password: "",
     password2: "",
   });
 
   const [serverError, setServerError] = useState("");
-  const dismissServerErrors = () => setServerError("");
   const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  const dismissServerErrors = () => setServerError("");
 
   const handleFormChange = (field, value) => {
-    setFormData((fs) => ({ ...fs, [field]: value }));
-    if (field in formErrors)
-      setFormErrors((fe) => {
-        const newfe = { ...fe };
-        delete newfe[field];
-        return newfe;
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field in formErrors) {
+      setFormErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
       });
+    }
   };
 
-  const handleFormSubmit = () => {
-    setFormErrors({});
-    axios.post("api/user/register/", formData)
-      .then(() => navigate("/main"))
-      .catch((ex) => {
-        const res = ex.response;
-        if (res && res.status === 400) {
-          setFormErrors(res.data);
-        } else {
-          setServerError(
-            `${t("serverError")} (error code ${res.status})`
-          );
-          console.error(res);
+  const handleFormSubmit = async () => {
+    // Basic validation
+    if (!formData.username || !formData.email || !formData.password || !formData.password2) {
+      setFormErrors({ form: "All fields are required" });
+      return;
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormErrors({ email: "Please enter a valid email address" });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "/api/user/register/",
+        formData,
+        {
+          headers: { "X-CSRFToken": getCookie("csrftoken") },
+          withCredentials: true,
         }
-      });
+      );
+
+      if (response.status === 201) {
+        // Registration successful, navigate to main page
+        navigate("/main");
+      }
+    } catch (error) {
+      if (error.response?.status === 400) {
+        // Handle validation errors from the backend
+        setFormErrors(error.response.data);
+      } else {
+        // Handle other errors
+        setServerError("An error occurred during registration. Please try again.");
+        console.error("Registration error:", error);
+      }
+    }
   };
 
-  const [showPassword, setShowPassword] = useState(false);
-  const handleTogglePasswordVisibility = () =>
-    setShowPassword((prev) => !prev);
+  const handleTogglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
-  const handleGoBack = () => {
-    navigate("/login");
-  };
+  const handleGoBack = () => navigate("/login");
 
   return (
     <>
@@ -83,7 +102,6 @@ function CreateAccount() {
         message={serverError}
       />
 
-      {/* Back Button */}
       <Box
         sx={{
           display: "flex",
@@ -120,57 +138,46 @@ function CreateAccount() {
         }}
       >
         <Logo fontSize={isMobile ? "70px" : "100px"} />
-        {/* Username Field */}
+
         <TextField
           id="username"
           label={t("username")}
           variant="outlined"
           autoComplete="username"
-          sx={{
-            width: isMobile ? "90%" : "500px",
-          }}
+          sx={{ width: isMobile ? "90%" : "500px" }}
           value={formData.username}
           onChange={(e) => handleFormChange("username", e.target.value)}
           error={"username" in formErrors}
-          helperText={"username" in formErrors ? formErrors.username : null}
+          helperText={formErrors.username}
         />
 
-        {/* Email Field */}
         <TextField
           id="email"
           label={t("email")}
           variant="outlined"
           autoComplete="email"
-          sx={{
-            width: isMobile ? "90%" : "500px",
-          }}
+          sx={{ width: isMobile ? "90%" : "500px" }}
           value={formData.email}
           onChange={(e) => handleFormChange("email", e.target.value)}
           error={"email" in formErrors}
-          helperText={"email" in formErrors ? formErrors.email : null}
+          helperText={formErrors.email}
         />
 
-        {/* Password Field */}
         <TextField
           id="password"
           label={t("password")}
           variant="outlined"
           type={showPassword ? "text" : "password"}
-          autoComplete="password"
-          sx={{
-            width: isMobile ? "90%" : "500px",
-          }}
+          autoComplete="new-password"
+          sx={{ width: isMobile ? "90%" : "500px" }}
           value={formData.password}
           onChange={(e) => handleFormChange("password", e.target.value)}
           error={"password" in formErrors}
-          helperText={"password" in formErrors ? formErrors.password : null}
+          helperText={formErrors.password}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  onClick={handleTogglePasswordVisibility}
-                  edge="end"
-                >
+                <IconButton onClick={handleTogglePasswordVisibility} edge="end">
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -178,27 +185,21 @@ function CreateAccount() {
           }}
         />
 
-        {/* Confirm Password Field */}
         <TextField
           id="confirm-password"
           label={t("confirmPassword")}
           variant="outlined"
           type={showPassword ? "text" : "password"}
-          autoComplete="confirmed-password"
-          sx={{
-            width: isMobile ? "90%" : "500px",
-          }}
+          autoComplete="new-password"
+          sx={{ width: isMobile ? "90%" : "500px" }}
           value={formData.password2}
           onChange={(e) => handleFormChange("password2", e.target.value)}
           error={"password2" in formErrors}
-          helperText={"password2" in formErrors ? formErrors.password2 : null}
+          helperText={formErrors.password2}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  onClick={handleTogglePasswordVisibility}
-                  edge="end"
-                >
+                <IconButton onClick={handleTogglePasswordVisibility} edge="end">
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
@@ -206,7 +207,6 @@ function CreateAccount() {
           }}
         />
 
-        {/* Register Button */}
         <Button
           sx={{
             color: theme.palette.primary.contrastText,

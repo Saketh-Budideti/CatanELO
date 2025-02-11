@@ -24,66 +24,63 @@ function App() {
 
   const theme = getTheme(mode);
 
-  const noAuthRoutes = [
-      { path: '/login', Element: Login },
-      { path: '/signin', Element: SignIn },
-      { path: '/account', Element: CreateAccount },
-  ];
-
-  const authRoutes = [
-      { path: '/profile', Element: ProfilePage },
-      { path: '/main', Element: MainPage },
-  ];
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-          <Box sx={{ position: 'fixed', top: 16, right: 16, zIndex: 9999, display: 'flex', gap: 1 }}>
-            <IconButton
-              onClick={toggleTheme}
-              sx={{
-                color: theme.palette.text.primary,
-                backgroundColor: theme.palette.action.hover,
-                borderRadius: '8px',
-                '&:hover': {
-                  backgroundColor: theme.palette.action.selected,
-                },
-              }}
-            >
-              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-            </IconButton>
-          </Box>
+        <Routes>
+          {/* Public routes - accessible when not logged in */}
+          <Route
+            path="/login"
+            element={
+              <RequireNoAuth>
+                <Login />
+              </RequireNoAuth>
+            }
+          />
+          <Route
+            path="/signin"
+            element={
+              <RequireNoAuth>
+                <SignIn />
+              </RequireNoAuth>
+            }
+          />
+          <Route
+            path="/create-account"
+            element={
+              <RequireNoAuth>
+                <CreateAccount />
+              </RequireNoAuth>
+            }
+          />
 
-          {/* Application Routes */}
-          <Routes>
-            <Route path="/" element={<Navigate to="/main" replace />} />
-            {noAuthRoutes.map(({ path, Element }) => (
-              <Route
-                path={path}
-                key={path}
-                element={
-                  <RequireNoAuth>
-                    <Element />
-                  </RequireNoAuth>
-                }
-              />
-            ))}
+          {/* Protected routes - require authentication */}
+          <Route
+            path="/main"
+            element={
+              <RequireAuth>
+                <UserProvider>
+                  <MainPage />
+                </UserProvider>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <UserProvider>
+                  <ProfilePage />
+                </UserProvider>
+              </RequireAuth>
+            }
+          />
 
-            {authRoutes.map(({ path, Element }) => (
-              <Route
-                path={path}
-                key={path}
-                element={
-                  <RequireAuth>
-                    <UserProvider>
-                      <Element />
-                    </UserProvider>
-                  </RequireAuth>
-                }
-              />
-            ))}
-          </Routes>
+          {/* Default redirect */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
       </AuthProvider>
     </ThemeProvider>
   );

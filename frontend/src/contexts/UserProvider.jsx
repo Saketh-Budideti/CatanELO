@@ -14,7 +14,7 @@ function UserProvider({ children }) {
     const setUserData = (data) => {
         setUser({
             ...data,
-            profile_img: data?.profile_img || defaultPfp,
+            profile_img: defaultPfp, // Always use default profile image
         });
     };
 
